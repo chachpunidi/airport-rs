@@ -1,6 +1,7 @@
 package ru.airport.service;
 
 import ru.airport.model.AircraftDto;
+import ru.airport.model.SeatDto;
 
 import java.util.List;
 
@@ -13,4 +14,12 @@ import java.util.List;
 public interface AircraftService {
 
     List<AircraftDto> getAircrafts();
+
+    AircraftDto getAircraft(String code);
+
+    List<SeatDto> getSeats();
+
+    List<SeatDto> getAircraftSeats(String aircraftCode);
+
+    SeatDto getSeat(String seatNo);
 }

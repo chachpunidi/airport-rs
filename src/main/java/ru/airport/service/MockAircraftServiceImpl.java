@@ -1,11 +1,13 @@
 package ru.airport.service;
 
 import ru.airport.model.AircraftDto;
+import ru.airport.model.SeatDto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Реализация AircraftService. Если AircraftService описывал как мы обращаемся к данным(только вид методов(сигнатуру)),
@@ -20,7 +22,8 @@ import java.util.Random;
 public class MockAircraftServiceImpl implements AircraftService {
 
     // Это список всех самолетов. Типа хранилище данных(как таблица в БД)
-    private List<AircraftDto> aircrafts = new ArrayList<AircraftDto>();
+    private List<AircraftDto> aircrafts = new ArrayList<>();
+    private List<SeatDto> seats = new ArrayList<>();
 
     // Список возможных моделей
     private List<String> models = Arrays.asList("Airbus A220", "Иркут МС-21", "Боинг-777", "Боинг-787");
@@ -39,10 +42,60 @@ public class MockAircraftServiceImpl implements AircraftService {
             aircraft.setModel(model);
             aircraft.setRange(randomModelIdx * i * 100);
             aircrafts.add(aircraft);
+
+            for (int k = 1; k <= 10; k++) {
+                Integer randomSeatIdx = rand.nextInt(); // генерируем случайное число из диапазона [0..models.size())
+
+
+                // Создаем запись о месте
+                SeatDto seat = new SeatDto();
+                seat.setAircraftCode(aircraft.getAircraftCode());
+                seat.setSeatNo(randomSeatIdx);
+                seat.setFareCondition(false);
+                seats.add(seat);
+            }
         }
+
     }
 
-    public List<AircraftDto> getAircrafts() {
-        return aircrafts;
+    @Override
+        public List<AircraftDto> getAircrafts() {
+            return aircrafts;
+    }
+
+    @Override
+    public AircraftDto getAircraft(String code) {
+        AircraftDto aircraft = null;
+        for (AircraftDto currentAircraft : aircrafts) {
+            if (currentAircraft.getAircraftCode().equals(code)) {
+                aircraft = currentAircraft;
+                break;
+            }
+        }
+        return aircraft;
+    }
+
+    @Override
+    public List<SeatDto> getSeats() {
+        return seats;
+    }
+
+    @Override
+    public List<SeatDto> getAircraftSeats(String aircraftCode) {
+        return seats.stream()
+                .filter(seat -> seat.getAircraftCode().equals(aircraftCode))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public SeatDto getSeat(String seatNo) {
+        SeatDto seat = null;
+        for (SeatDto currentSeat : seats) {
+            if (currentSeat.getSeatNo().equals(seatNo)) {
+                seat = currentSeat;
+                break;
+            }
+        }
+        return seat;
     }
 }
